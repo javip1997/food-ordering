@@ -20,7 +20,6 @@ function Menu() {
     <div>
       <h1 className="text-2xl font-bold mb-4">Menu</h1>
 
-      {/* Search + Filter */}
       <div className="flex gap-2 mb-4">
         <input
           type="text"
@@ -38,7 +37,7 @@ function Menu() {
         </select>
       </div>
 
-      {/* Product list */}
+    
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {filtered.map(p => <ProductCard key={p.id} product={p} />)}
       </div>
