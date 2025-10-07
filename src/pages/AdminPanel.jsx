@@ -31,6 +31,11 @@ function AdminPanel() {
      <div className="grid h-56 grid-cols-3 content-start gap-4 bg-blue-100 p-4 rounded-lg shadow-md">
         <div className="bg-white rounded-lg shadow p-4 text-center font-semibold">
           Total Products
+          
+          <p>
+            50
+          </p>
+
         </div>
         <div className="bg-white rounded-lg shadow p-4 text-center font-semibold">
           Total Orders
