@@ -1,72 +1,86 @@
-import { useState, useEffect } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { saveProfile, setLocation } from "../redux/profileSlice"
-import { useNavigate } from "react-router-dom"
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProfile } from "../redux/authSlice";
 
 export default function ProfilePage() {
-  const profile = useSelector(s => s.profile)
-  const [name, setName] = useState(profile.name || "")
-  const [email, setEmail] = useState(profile.email || "")
-  const [phone, setPhone] = useState(profile.phone || "")
-  const [address, setAddress] = useState(profile.address || "")
-  const [location, setLocationLocal] = useState(profile.location || "")
-  const dispatch = useDispatch()
-  const nav = useNavigate()
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const { dark } = useSelector((state) => state.theme);
 
-  useEffect(()=> {
-    setName(profile.name || "")
-    setEmail(profile.email || "")
-    setPhone(profile.phone || "")
-    setAddress(profile.address || "")
-    setLocationLocal(profile.location || "")
-  }, [profile])
+  const [formData, setFormData] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    location: user?.location || "",
+  });
 
-  const handleSave = (e) => {
-    e.preventDefault()
-    dispatch(saveProfile({ name, email, phone, address, location }))
-    nav("/checkout")
-  }
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleLocationSearch = () => {
-    dispatch(setLocation(location))
-  }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(updateProfile(formData));
+    alert("Profile updated successfully!");
+  };
 
   return (
-    <div className="max-w-md mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Profile & Delivery</h1>
+    <div
+      className={`max-w-md mx-auto mt-10 p-6 rounded shadow transition-colors duration-300 ${
+        dark ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+      }`}
+    >
+      <h2 className="text-xl font-bold mb-4">My Profile</h2>
 
-      <form onSubmit={handleSave} className="bg-white p-6 rounded shadow space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Full name</label>
-          <input value={name} onChange={e=>setName(e.target.value)} className="border p-3 rounded w-full" required />
-        </div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={formData.name}
+          onChange={handleChange}
+          className={`px-3 py-2 rounded border focus:outline-none focus:ring w-full transition-colors duration-300 ${
+            dark
+              ? "bg-gray-700 text-white border-gray-600 focus:ring-blue-500"
+              : "bg-white text-gray-900 border-gray-300 focus:ring-blue-400"
+          }`}
+        />
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
-          <input value={email} onChange={e=>setEmail(e.target.value)} className="border p-3 rounded w-full" type="email" required />
-        </div>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          className={`px-3 py-2 rounded border focus:outline-none focus:ring w-full transition-colors duration-300 ${
+            dark
+              ? "bg-gray-700 text-white border-gray-600 focus:ring-blue-500"
+              : "bg-white text-gray-900 border-gray-300 focus:ring-blue-400"
+          }`}
+        />
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Phone</label>
-          <input value={phone} onChange={e=>setPhone(e.target.value)} className="border p-3 rounded w-full" required />
-        </div>
+        <input
+          type="text"
+          name="location"
+          placeholder="Location"
+          value={formData.location}
+          onChange={handleChange}
+          className={`px-3 py-2 rounded border focus:outline-none focus:ring w-full transition-colors duration-300 ${
+            dark
+              ? "bg-gray-700 text-white border-gray-600 focus:ring-blue-500"
+              : "bg-white text-gray-900 border-gray-300 focus:ring-blue-400"
+          }`}
+        />
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Delivery address</label>
-          <textarea value={address} onChange={e=>setAddress(e.target.value)} className="border p-3 rounded w-full" rows="3" required/>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">Location (search)</label>
-          <div className="flex gap-2">
-            <input value={location} onChange={e=>setLocationLocal(e.target.value)} className="border p-3 rounded flex-1" placeholder="Enter city or area"/>
-            <button type="button" onClick={handleLocationSearch} className="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
-          </div>
-          <p className="text-sm text-gray-500 mt-2">Saved location: <strong>{profile.location}</strong></p>
-        </div>
-
-        <button className="w-full bg-green-600 text-white py-3 rounded">Save & Continue</button>
+        <button
+          type="submit"
+          className={`px-3 py-2 rounded transition-colors duration-300 ${
+            dark
+              ? "bg-blue-600 hover:bg-blue-700 text-white"
+              : "bg-blue-600 hover:bg-blue-700 text-white"
+          }`}
+        >
+          Update Profile
+        </button>
       </form>
     </div>
-  )
+  );
 }
