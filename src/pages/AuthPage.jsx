@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login, register } from "../redux/authSlice";
-import { saveProfile } from "../redux/profileSlice"; // <-- import profile action
+import { saveProfile } from "../redux/profileSlice";
 import { toggleTheme } from "../redux/themeSlice";
 import { useNavigate } from "react-router-dom";
 
@@ -38,93 +38,78 @@ export default function AuthPage() {
         setError("Invalid credentials. Please register first.");
         return;
       }
-
-      // Update authSlice
       dispatch(login(user));
-
-      // Update profileSlice
-      dispatch(
-        saveProfile({
-          name: user.name,
-          email: user.email,
-          phone: user.phone || "",
-          address: user.address || "",
-          location: user.location || "",
-        })
-      );
-
+      dispatch(saveProfile({
+        name: user.name,
+        email: user.email,
+        phone: user.phone || "",
+        address: user.address || "",
+        location: user.location || "",
+      }));
       navigate("/");
     } else {
       if (storedUsers.some((u) => u.email === formData.email)) {
         setError("User already exists. Please login.");
         return;
       }
-
       const newUser = {
         name: formData.name,
         email: formData.email,
         password: formData.password,
         location: formData.location,
       };
-
       storedUsers.push(newUser);
       localStorage.setItem("users", JSON.stringify(storedUsers));
-
-      // Update authSlice
       dispatch(register(newUser));
-
-      // Update profileSlice
-      dispatch(
-        saveProfile({
-          name: newUser.name,
-          email: newUser.email,
-          phone: "",
-          address: "",
-          location: newUser.location,
-        })
-      );
-
+      dispatch(saveProfile({
+        name: newUser.name,
+        email: newUser.email,
+        phone: "",
+        address: "",
+        location: newUser.location,
+      }));
       navigate("/");
     }
   };
 
-  const inputClass = `px-3 py-2 rounded border focus:outline-none focus:ring w-full ${
+  const inputClass = `px-4 py-3 rounded-lg border focus:outline-none focus:ring w-full ${
     dark
       ? "bg-gray-700 text-white border-gray-600 placeholder-gray-400"
-      : "bg-white text-black border-gray-300 placeholder-gray-500"
+      : "bg-white text-gray-800 border-gray-300 placeholder-gray-gray-500"
   }`;
 
-  const formBgClass = dark ? "bg-gray-800" : isLogin ? "bg-white" : "bg-blue-50";
-  const pageBgClass = dark ? "bg-gray-900" : "bg-gray-100";
-
   return (
-    <div className={`min-h-screen flex flex-col items-center justify-center transition-colors duration-300 ${pageBgClass}`}>
-      {/* Dark Mode Toggle */}
-      <div className="absolute top-4 right-4">
-        <button
-          onClick={() => dispatch(toggleTheme())}
-          className={`px-3 py-1 rounded shadow ${
-            dark ? "bg-gray-700 text-white" : "bg-gray-300 text-black"
-          }`}
-        >
-          {dark ? "Light Mode" : "Dark Mode"}
-        </button>
-      </div>
-
+    <div
+      className={`min-h-screen flex items-center justify-center relative ${
+        dark ? "bg-gray-900" : "bg-gray-100"
+      }`}
+    >
+      {/* Background image */}
       <div
-        className={`p-8 rounded-lg shadow-lg w-full max-w-md transition-colors duration-300 ${formBgClass}`}
+        className="absolute inset-0 bg-cover bg-center opacity-20"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1470&q=80')",
+        }}
+      ></div>
+
+      {/* Card */}
+      <div
+        className={`relative z-10 w-full max-w-md p-8 rounded-2xl shadow-2xl transition-colors duration-300 ${
+          dark ? "bg-gray-800" : "bg-white"
+        }`}
       >
-        {/* Login/Register Toggle */}
-        <div className="flex justify-center mb-6">
+        {/* Toggle */}
+        <div className="flex justify-center mb-6 space-x-6">
           <button
             onClick={() => {
               setIsLogin(true);
               setError("");
             }}
-            className={`px-4 py-2 font-semibold border-b-2 transition-colors duration-300 ${
+            className={`pb-2 font-semibold text-lg border-b-2 transition-colors duration-300 ${
               isLogin
                 ? "border-blue-600 text-blue-600"
-                : `border-transparent ${dark ? "text-gray-300" : "text-gray-600"}`
+                : `border-transparent ${dark ? "text-gray-300" : "text-gray-500"}`
             }`}
           >
             Login
@@ -134,22 +119,22 @@ export default function AuthPage() {
               setIsLogin(false);
               setError("");
             }}
-            className={`px-4 py-2 font-semibold border-b-2 transition-colors duration-300 ${
+            className={`pb-2 font-semibold text-lg border-b-2 transition-colors duration-300 ${
               !isLogin
                 ? "border-blue-600 text-blue-600"
-                : `border-transparent ${dark ? "text-gray-300" : "text-gray-600"}`
+                : `border-transparent ${dark ? "text-gray-300" : "text-gray-500"}`
             }`}
           >
             Register
           </button>
         </div>
 
+        {/* Error */}
         {error && (
-          <div className="text-red-500 text-sm mb-3 text-center animate-pulse">
-            {error}
-          </div>
+          <div className="text-red-500 text-center mb-4 animate-pulse">{error}</div>
         )}
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {!isLogin && (
             <>
@@ -165,7 +150,7 @@ export default function AuthPage() {
               <input
                 type="text"
                 name="location"
-                placeholder="Address / Location"
+                placeholder="Location / Address"
                 value={formData.location}
                 onChange={handleChange}
                 className={inputClass}
@@ -196,13 +181,36 @@ export default function AuthPage() {
 
           <button
             type="submit"
-            className={`px-3 py-2 mt-2 rounded transition-colors duration-300 ${
-              dark ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"
-            }`}
+            className="mt-4 px-4 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-all"
           >
             {isLogin ? "Login" : "Register"}
           </button>
         </form>
+
+        {/* Footer text */}
+        <p className="text-sm text-gray-500 text-center mt-4">
+          {isLogin ? (
+            <>
+              Don't have an account?{" "}
+              <button
+                onClick={() => setIsLogin(false)}
+                className="text-blue-600 font-medium hover:underline"
+              >
+                Register
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <button
+                onClick={() => setIsLogin(true)}
+                className="text-blue-600 font-medium hover:underline"
+              >
+                Login
+              </button>
+            </>
+          )}
+        </p>
       </div>
     </div>
   );

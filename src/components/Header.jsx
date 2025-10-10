@@ -17,7 +17,7 @@ export default function Header() {
 
   const qty = cart.reduce((a, b) => a + b.qty, 0);
 
-  // Toggle body background based on theme
+  // Toggle body classes based on theme
   useEffect(() => {
     document.body.classList.toggle("bg-gray-900", dark);
     document.body.classList.toggle("text-white", dark);
@@ -38,7 +38,7 @@ export default function Header() {
     <>
       {/* Header */}
       <header
-        className={`sticky top-0 z-50 shadow transition-colors duration-300 flex justify-between items-center px-4 py-3 ${
+        className={`sticky top-0 z-50 flex justify-between items-center px-4 py-3 shadow-md transition-colors duration-300 ${
           dark ? "bg-gray-900 text-white" : "bg-white text-gray-900"
         }`}
       >
@@ -46,16 +46,16 @@ export default function Header() {
         <div className="flex items-center gap-4">
           <Link
             to="/"
-            className={`text-2xl font-bold ${dark ? "text-blue-400" : "text-blue-600"}`}
+            className={`text-2xl font-bold ${dark ? "text-orange-400" : "text-orange-600"} hover:scale-105 transition-transform`}
           >
             FoodieApp
           </Link>
 
           {/* Desktop location */}
           <div
-            className={`hidden sm:flex items-center gap-2 ${
-              dark ? "bg-gray-800" : "bg-gray-100"
-            } rounded-full px-3 py-1`}
+            className={`hidden sm:flex items-center gap-2 px-3 py-1 rounded-full ${
+              dark ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"
+            }`}
           >
             <svg
               className="w-5 h-5 text-gray-500"
@@ -65,12 +65,10 @@ export default function Header() {
             >
               <path d="M21 10c0 6-9 13-9 13S3 16 3 10a9 9 0 1 1 18 0z"></path>
             </svg>
-            <div className="text-sm text-gray-700 dark:text-gray-300">
-              {user?.location || "Search location"}
-            </div>
+            <span className="text-sm">{user?.location || "Set location"}</span>
             <button
               onClick={() => navigate("/profile")}
-              className="text-xs text-blue-600 dark:text-blue-400 ml-3"
+              className={`text-xs ml-2 ${dark ? "text-blue-400" : "text-blue-600"}`}
             >
               Change
             </button>
@@ -79,38 +77,34 @@ export default function Header() {
 
         {/* Desktop Nav */}
         <nav className="hidden sm:flex gap-6 items-center">
-          <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400">
-            Home
-          </Link>
-          <Link to="/menu" className="hover:text-blue-600 dark:hover:text-blue-400">
-            Menu
-          </Link>
-          <Link to="/about" className="hover:text-blue-600 dark:hover:text-blue-400">
-            About
-          </Link>
-          <Link to="/contact" className="hover:text-blue-600 dark:hover:text-blue-400">
-            Contact
-          </Link>
+          {["Home", "Menu", "About", "Contact"].map((link) => (
+            <Link
+              key={link}
+              to={`/${link.toLowerCase()}`}
+              className="hover:text-orange-500 transition-colors duration-200"
+            >
+              {link}
+            </Link>
+          ))}
         </nav>
 
-        {/* Right buttons */}
+        {/* Right Buttons */}
         <div className="flex items-center gap-2">
+          {/* Theme toggle */}
           <button
             onClick={() => dispatch(toggleTheme())}
-            className={`px-3 py-1 rounded transition-colors duration-300 ${
-              dark
-                ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            className={`px-3 py-1 rounded-full transition-all duration-200 ${
+              dark ? "bg-gray-700 hover:bg-gray-600 text-gray-200" : "bg-gray-200 hover:bg-gray-300 text-gray-700"
             }`}
           >
             {dark ? "🌙" : "☀️"}
           </button>
 
-          {/* Desktop Login/Profile */}
+          {/* Login / Profile */}
           {!user ? (
             <button
               onClick={() => navigate("/auth")}
-              className="hidden sm:block px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+              className="hidden sm:block px-3 py-1 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors"
             >
               Login / Register
             </button>
@@ -118,10 +112,8 @@ export default function Header() {
             <div id="profile-dropdown" className="relative hidden sm:block">
               <button
                 onClick={() => setShowProfile((prev) => !prev)}
-                className={`px-3 py-1 rounded ${
-                  dark
-                    ? "bg-gray-700 text-gray-200 hover:bg-gray-600"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                className={`px-3 py-1 rounded-full transition-all duration-200 ${
+                  dark ? "bg-gray-700 hover:bg-gray-600 text-gray-200" : "bg-gray-200 hover:bg-gray-300 text-gray-700"
                 }`}
               >
                 {user.name || user.email}
@@ -129,18 +121,14 @@ export default function Header() {
 
               {showProfile && (
                 <div
-                  className={`absolute right-0 mt-2 w-44 rounded shadow-lg border transition-colors duration-300 ${
-                    dark
-                      ? "bg-gray-800 border-gray-700 text-gray-200"
-                      : "bg-white border-gray-200 text-gray-800"
+                  className={`absolute right-0 mt-2 w-44 rounded-lg shadow-lg border transition-colors duration-300 ${
+                    dark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
                   }`}
                 >
                   <Link
                     to="/profile"
                     onClick={() => setShowProfile(false)}
-                    className={`block px-4 py-2 text-sm ${
-                      dark ? "hover:bg-gray-700 hover:text-white" : "hover:bg-gray-100"
-                    }`}
+                    className="block px-4 py-2 hover:bg-orange-100 dark:hover:bg-gray-700"
                   >
                     My Profile
                   </Link>
@@ -151,9 +139,7 @@ export default function Header() {
                       setShowProfile(false);
                       navigate("/");
                     }}
-                    className={`block w-full text-left px-4 py-2 text-sm ${
-                      dark ? "hover:bg-gray-700 hover:text-white" : "hover:bg-gray-100"
-                    }`}
+                    className="block w-full text-left px-4 py-2 hover:bg-orange-100 dark:hover:bg-gray-700"
                   >
                     Logout
                   </button>
@@ -162,7 +148,7 @@ export default function Header() {
             </div>
           )}
 
-          {/* Hamburger for mobile */}
+          {/* Hamburger */}
           <button
             className="sm:hidden px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
             onClick={() => setShowMobileMenu((prev) => !prev)}
@@ -170,15 +156,15 @@ export default function Header() {
             ☰
           </button>
 
-          {/* Cart for desktop */}
+          {/* Cart */}
           <div className="hidden sm:flex relative">
             <button
               onClick={() => navigate("/cart")}
-              className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all"
             >
               🛒 Cart
               {qty > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                <span className="absolute -top-2 -right-2 bg-red-500 text-xs px-2 py-0.5 rounded-full animate-pulse">
                   {qty}
                 </span>
               )}
@@ -199,9 +185,9 @@ export default function Header() {
             }`}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Mobile Location */}
+            {/* Location */}
             <div
-              className={`flex items-center gap-2 px-3 py-2 rounded ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-full ${
                 dark ? "bg-gray-800 text-white" : "bg-gray-100 text-gray-900"
               }`}
             >
@@ -213,7 +199,7 @@ export default function Header() {
               >
                 <path d="M21 10c0 6-9 13-9 13S3 16 3 10a9 9 0 1 1 18 0z"></path>
               </svg>
-              <div className="text-sm">{user?.location || "Search location"}</div>
+              <span className="text-sm">{user?.location || "Set location"}</span>
               <button
                 onClick={() => {
                   navigate("/profile");
@@ -225,19 +211,17 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Mobile Links */}
-            <Link to="/" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600">
-              Home
-            </Link>
-            <Link to="/menu" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600">
-              Menu
-            </Link>
-            <Link to="/about" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600">
-              About
-            </Link>
-            <Link to="/contact" onClick={() => setShowMobileMenu(false)} className="hover:text-blue-600">
-              Contact
-            </Link>
+            {/* Links */}
+            {["Home", "Menu", "About", "Contact"].map((link) => (
+              <Link
+                key={link}
+                to={`/${link.toLowerCase()}`}
+                onClick={() => setShowMobileMenu(false)}
+                className="px-3 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              >
+                {link}
+              </Link>
+            ))}
 
             {/* Theme Toggle */}
             <button
@@ -256,7 +240,7 @@ export default function Header() {
                   navigate("/auth");
                   setShowMobileMenu(false);
                 }}
-                className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
               >
                 Login / Register
               </button>
@@ -265,7 +249,7 @@ export default function Header() {
                 <Link
                   to="/profile"
                   onClick={() => setShowMobileMenu(false)}
-                  className={`px-3 py-1 rounded hover:bg-gray-200 ${dark ? "hover:bg-gray-700" : ""}`}
+                  className="px-3 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
                   My Profile
                 </Link>
@@ -276,7 +260,7 @@ export default function Header() {
                     setShowMobileMenu(false);
                     navigate("/");
                   }}
-                  className={`px-3 py-1 rounded hover:bg-gray-200 ${dark ? "hover:bg-gray-700" : ""}`}
+                  className="px-3 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
                   Logout
                 </button>
@@ -286,15 +270,15 @@ export default function Header() {
         </div>
       )}
 
-      {/* Cart fixed at bottom for mobile */}
+      {/* Mobile Cart Button */}
       <div className="sm:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
         <button
           onClick={() => navigate("/cart")}
-          className="relative flex items-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700"
+          className="relative flex items-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all"
         >
           🛒 Cart
           {qty > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full animate-pulse">
               {qty}
             </span>
           )}
