@@ -11,6 +11,7 @@ import Register from "./pages/Register"
 import AuthPage from "./pages/AuthPage"
 import Header from "./components/Header"
 import { useSelector } from "react-redux"
+import Footer from "./components/Footer"
 
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/register" element={<Register />} />
         </Routes>
       </main>
+      <Footer />
     </div>
   )
 }
